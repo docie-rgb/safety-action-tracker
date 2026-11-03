@@ -3,7 +3,7 @@
 작업자의 **위험요인 신고**부터 안전관리자의 **개선조치 관리**까지 하나의 흐름으로 처리하는 산업안전 웹서비스입니다.
 AI 에이전트 개발 교육과정 Main Quest 1 제출용 독립 교육 프로토타입이며, 모든 데이터는 가상 데이터입니다.
 
-- **배포 URL**: _(배포 후 기재)_
+- **배포 URL**: https://safety-action-tracker.onrender.com
 - **요구사항 문서**: [PRD.md](PRD.md)
 - **검증 결과**: [docs/VERIFICATION.md](docs/VERIFICATION.md)
 

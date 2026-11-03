@@ -1,7 +1,7 @@
 # RLS·권한 실제 검증 결과
 
-- 실행 시각: 2026-11-03 15:25:19
-- 앱 API 대상: `http://127.0.0.1:8000`
+- 실행 시각: 2026-11-03 16:04:14
+- 앱 API 대상: `https://safety-action-tracker.onrender.com`
 - 결과: 36 / 36 통과
 - 방식: 데모 계정의 일반 사용자 토큰으로 Supabase REST 직접 호출 + 앱 API 호출 (service_role 키 미사용)
 
@@ -14,7 +14,7 @@
 | DB 직접 | 작업자 생성 시 타인 ID 로 신고 거부 | PASS | HTTP 403, code=42501 |
 | DB 직접 | 작업자 생성 시 다른 사업장 ID 위조 거부 | PASS | HTTP 403, code=42501 |
 | DB 직접 | 작업자 정상 신고 (본인 ID·접수 상태 자동) | PASS | HTTP 201, 1건 |
-| DB 직접 | 작업자 목록은 본인 신고만 | PASS | HTTP 200, 5건 |
+| DB 직접 | 작업자 목록은 본인 신고만 | PASS | HTTP 200, 21건 |
 | DB 직접 | 작업자가 타인 신고 ID 직접 조회 → 0건 | PASS | HTTP 200, 0건 |
 | DB 직접 | 작업자 상태·조치 수정 차단 | PASS | HTTP 200, 0건 |
 | DB 직접 | 작업자 삭제 차단 (0건) | PASS | HTTP 200, 0건 |
