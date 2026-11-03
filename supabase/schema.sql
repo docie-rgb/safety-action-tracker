@@ -193,13 +193,38 @@ begin
 
   delete from public.hazard_reports where organization_id = org;
 
+  -- 날짜는 실행 시점 기준 상대값: due_in = 오늘부터 조치기한까지 일수(음수면 기한 경과), *_ago = 며칠 전
   insert into public.hazard_reports
     (organization_id, reported_by, area, hazard, action, status, due_date, completed_at, created_at)
-  values
-    (org, w, 'A동 2층 계단', '계단 난간 고정 볼트가 풀려 흔들림', null, 'received', null, null, now() - interval '1 day'),
-    (org, w, '자재 창고', '통로에 팔레트가 적재되어 비상구 동선이 막힘', '팔레트 재배치 및 통로 바닥 표시', 'in_progress', current_date + 3, null, now() - interval '3 days'),
-    (org, w, '용접 작업장', '국소배기장치 흡입력 약화', '필터 교체 및 풍량 측정', 'in_progress', current_date - 2, null, now() - interval '7 days'),
-    (org, w, '지게차 통로', '보행자 통로 구분선이 지워짐', '구분선 재도색 완료', 'completed', current_date - 5, now() - interval '4 days', now() - interval '10 days');
+  select org, w, v.area, v.hazard, v.action, v.status,
+         current_date + v.due_in,
+         now() - make_interval(days => v.completed_ago),
+         now() - make_interval(days => v.created_ago, hours => v.hours_ago)
+  from (values
+    -- 접수 (조치 전)
+    ('B동 출입구', '우천 시 출입구 바닥이 미끄러운데 미끄럼 방지 매트가 없음', null::text, 'received', null::int, null::int, 0, 3),
+    ('A동 2층 계단', '계단 난간 고정 볼트가 풀려 흔들림', null, 'received', null, null, 1, 2),
+    ('프레스 작업장', '2호기 프레스 양수조작 버튼 한쪽이 테이프로 눌린 채 고정되어 있음', null, 'received', null, null, 2, 5),
+    ('옥상', '옥상 출입문 옆 안전난간 일부 구간이 철거된 채 방치됨', null, 'received', null, null, 2, 1),
+    ('전기실', '분전반 앞에 박스가 쌓여 차단기 조작 공간이 확보되지 않음', null, 'received', null, null, 4, 6),
+    ('휴게실', '전기 포트용 멀티탭이 문어발식으로 연결되어 있고 피복 일부가 손상됨', null, 'received', null, null, 5, 4),
+    -- 조치 중 (일부 기한 경과)
+    ('자재 창고', '통로에 팔레트가 적재되어 비상구 동선이 막힘', '팔레트 재배치 및 통로 바닥 표시', 'in_progress', 3, null, 3, 2),
+    ('도장 부스', '유기용제 용기 뚜껑이 열린 채 보관되어 냄새가 심함', '밀폐 용기로 교체하고 MSDS 게시 위치 재정비', 'in_progress', 5, null, 4, 7),
+    ('고소작업 구역', '이동식 비계 바퀴 고정장치 1개가 파손됨', '해당 비계 사용 중지 표지 부착, 고정장치 교체 예정', 'in_progress', 7, null, 5, 3),
+    ('C동 지게차 충전소', '충전 구역에 소화기가 비치되어 있지 않음', '분말소화기 2대 비치 요청, 점검표 부착 예정', 'in_progress', 2, null, 6, 5),
+    ('용접 작업장', '국소배기장치 흡입력 약화', '필터 교체 및 풍량 측정', 'in_progress', -2, null, 7, 4),
+    ('컨베이어 라인', '3번 컨베이어 끝단 비상정지 스위치 작동 불량', '비상정지 스위치 교체 부품 발주 완료', 'in_progress', -1, null, 9, 2),
+    ('화학물질 보관실', '산·알칼리 약품이 같은 선반에 섞여 보관됨', '성상별 분리 보관 선반 설치 진행 중', 'in_progress', -4, null, 12, 6),
+    -- 완료
+    ('지게차 통로', '보행자 통로 구분선이 지워짐', '구분선 재도색 완료', 'completed', -5, 4, 10, 3),
+    ('기계 가공실', '연삭기 덮개가 분리된 채 사용 중', '덮개 재설치, 작업 전 점검 항목에 추가', 'completed', -8, 9, 14, 5),
+    ('주차장 진입로', '야간 조명 2개가 꺼져 보행자 식별이 어려움', '조명 교체 완료', 'completed', -10, 11, 16, 2),
+    ('포장 라인', '밴딩기 칼날 부위에 방호커버가 없음', '방호커버 설치 및 작업자 교육 실시', 'completed', -12, 13, 20, 4),
+    ('A동 1층 복도', '소화전 앞 적재물 때문에 소화전을 열 수 없음', '적재물 이동, 소화전 앞 적재 금지 표시', 'completed', -15, 18, 22, 6),
+    ('폐기물 집하장', '날카로운 금속 스크랩이 일반 마대에 담겨 있음', '스크랩 전용 철제 용기 비치', 'completed', -18, 17, 25, 3),
+    ('탈의실', '비상구 유도등이 점등되지 않음', '유도등 배터리 교체', 'completed', -20, 24, 28, 5)
+  ) as v(area, hazard, action, status, due_in, completed_ago, created_ago, hours_ago);
 
   get diagnostics n = row_count;
   return n;

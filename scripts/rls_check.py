@@ -208,6 +208,7 @@ def write_report() -> None:
 
 
 def main() -> int:
+    sys.stdout.reconfigure(encoding="utf-8")  # Windows 콘솔(cp949)에서도 출력되도록
     if not config.SUPABASE_URL or not config.SUPABASE_PUBLISHABLE_KEY:
         sys.exit(".env 에 SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY 가 없습니다.")
     if config.SUPABASE_PUBLISHABLE_KEY.startswith("sb_secret_"):

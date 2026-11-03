@@ -25,10 +25,11 @@ join auth.users u on lower(u.email) = v.email
 on conflict (user_id) do update
   set role = excluded.role, display_name = excluded.display_name, organization_id = excluded.organization_id;
 
--- 두 계정이 모두 연결됐는지 확인: 2 가 아니면 이메일·계정 생성 여부를 확인한다
-select count(*) as demo_profiles from public.profiles
-where organization_id = '00000000-0000-4000-8000-000000000001';
-
-select private.seed_demo_reports('00000000-0000-4000-8000-000000000001') as seeded_reports;
+-- SQL Editor 는 마지막 결과만 보여 주므로 한 줄로 함께 출력한다.
+-- demo_profiles 가 2 가 아니면 이메일·계정 생성 여부를 확인한다.
+select
+  private.seed_demo_reports('00000000-0000-4000-8000-000000000001') as seeded_reports,
+  (select count(*) from public.profiles
+    where organization_id = '00000000-0000-4000-8000-000000000001') as demo_profiles;
 
 commit;
