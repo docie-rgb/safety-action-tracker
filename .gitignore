@@ -1,0 +1,17 @@
+# 비밀정보 / 로컬 설정
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 로컬 도구 설정
+.claude/

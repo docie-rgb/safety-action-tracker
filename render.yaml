@@ -1,0 +1,28 @@
+# Render Blueprint. 비밀값은 sync: false → Render 대시보드에서 직접 입력한다 (Git 에 값이 없다).
+services:
+  - type: web
+    name: safety-action-tracker
+    runtime: python
+    plan: free
+    region: singapore
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: DEMO_WORKER_EMAIL
+        sync: false
+      - key: DEMO_WORKER_PASSWORD
+        sync: false
+      - key: DEMO_MANAGER_EMAIL
+        sync: false
+      - key: DEMO_MANAGER_PASSWORD
+        sync: false
